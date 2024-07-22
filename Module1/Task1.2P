@@ -1,5 +1,5 @@
 const int GREEN_LED_PIN = 12;
-const int SENSOR_PIN = 2; //signal pin of sensor to digital pin 5
+const int SENSOR_PIN = 2; //signal pin of sensor to digital pin 2
 bool isMotion = false; //flag
 int val; 
 uint8_t ledState = LOW;
