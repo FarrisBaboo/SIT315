@@ -1,1 +1,23 @@
+const int GREEN_LED_PIN = 12;
+const int SENSOR_PIN = 2; //signal pin of sensor to digital pin 5
+bool isMotion = false; //flag
+int val; 
+uint8_t ledState = LOW;
 
+void CheckMotion(){
+  ledState = !ledState;
+  digitalWrite(GREEN_LED_PIN, ledState);
+}
+
+void setup() {
+  Serial.begin(9600);
+  
+  //add interrupt to make the system real time
+  attachInterrupt(digitalPinToInterrupt(SENSOR_PIN), CheckMotion, CHANGE);
+  
+  pinMode(GREEN_LED_PIN, OUTPUT);
+  pinMode(SENSOR_PIN, INPUT); // PIR motion sensor is an input here
+}
+
+void loop() {
+}
