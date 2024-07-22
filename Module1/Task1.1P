@@ -1,34 +1,38 @@
-const int TRIG_PIN = 6;
-const int ECHO_PIN = 7;
 const int GREEN_LED_PIN = 12;
 const int RED_LED_PIN = 13;
-const int DISTANCE_THRESHOLD = 50;
-
-float duration_us, distance_cm;
+const int CheckHumid = 400; //humid soil
+bool isHumid = false;
+int val;
 
 void setup() {
   Serial.begin(9600);
-  pinMode(TRIG_PIN, OUTPUT);
-  pinMode(ECHO_PIN, INPUT);
+
   pinMode(GREEN_LED_PIN, OUTPUT);
   pinMode(RED_LED_PIN, OUTPUT);
 }
 
 void loop() {
-  //sense
-  digitalWrite(TRIG_PIN, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN, LOW);
+  //sense: soil moisture sensor records reading
+  val = analogRead(0); //connect sensor to Analog 0
+  Serial.print(val); //print the value to serial port
+  Serial.println(" moisture level");
   
-  duration_us = pulseIn(ECHO_PIN, HIGH);
-  distance_cm = 0.017 * duration_us;
-  
-  if(distance_cm < DISTANCE_THRESHOLD) { //think
-    digitalWrite(RED_LED_PIN, HIGH); //act
+  //think: compare sensor reading
+  if(val >= CheckHumid){
+    isHumid = true;
+  }
+  else
+  {
+    isHumid = false;
+  }
+    
+  //act: blink LEDs accordingly
+  if(isHumid == true) {
+    digitalWrite(RED_LED_PIN, HIGH);
     delay(250);
     digitalWrite(RED_LED_PIN, LOW);
     Serial.println("RED LED BLINKING");
-  } 
+  }
   else {
     digitalWrite(GREEN_LED_PIN, HIGH);
     delay(500);
@@ -37,9 +41,5 @@ void loop() {
     Serial.println("GREEN LED BLINKING");
   }
   
-  Serial.print("distance: ");
-  Serial.print(distance_cm);
-  Serial.println(" cm");
-  
-  delay(500);
+  delay(1000);
 }
