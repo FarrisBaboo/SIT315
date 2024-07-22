@@ -26,20 +26,15 @@ void loop() {
     isHumid = false;
   }
     
-  //act: blink LEDs accordingly
+  //act: turn on LEDs accordingly
   if(isHumid == true) {
+    digitalWrite(GREEN_LED_PIN, LOW);
     digitalWrite(RED_LED_PIN, HIGH);
-    delay(250);
-    digitalWrite(RED_LED_PIN, LOW);
-    Serial.println("RED LED BLINKING");
+    Serial.println("RED LED ON");
   }
   else {
-    digitalWrite(GREEN_LED_PIN, HIGH);
-    delay(500);
-    digitalWrite(GREEN_LED_PIN, LOW);
     digitalWrite(RED_LED_PIN, LOW);
-    Serial.println("GREEN LED BLINKING");
+    digitalWrite(GREEN_LED_PIN, HIGH);
+    Serial.println("GREEN LED ON");
   }
-  
-  delay(1000);
 }
