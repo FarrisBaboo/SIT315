@@ -1,0 +1,45 @@
+const int TRIG_PIN = 6;
+const int ECHO_PIN = 7;
+const int GREEN_LED_PIN = 12;
+const int RED_LED_PIN = 13;
+const int DISTANCE_THRESHOLD = 50;
+
+float duration_us, distance_cm;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+  pinMode(GREEN_LED_PIN, OUTPUT);
+  pinMode(RED_LED_PIN, OUTPUT);
+}
+
+void loop() {
+  //sense
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+  
+  duration_us = pulseIn(ECHO_PIN, HIGH);
+  distance_cm = 0.017 * duration_us;
+  
+  if(distance_cm < DISTANCE_THRESHOLD) { //think
+    digitalWrite(RED_LED_PIN, HIGH); //act
+    delay(250);
+    digitalWrite(RED_LED_PIN, LOW);
+    Serial.println("RED LED BLINKING");
+  } 
+  else {
+    digitalWrite(GREEN_LED_PIN, HIGH);
+    delay(500);
+    digitalWrite(GREEN_LED_PIN, LOW);
+    digitalWrite(RED_LED_PIN, LOW);
+    Serial.println("GREEN LED BLINKING");
+  }
+  
+  Serial.print("distance: ");
+  Serial.print(distance_cm);
+  Serial.println(" cm");
+  
+  delay(500);
+}
