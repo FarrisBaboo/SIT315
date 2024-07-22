@@ -1,7 +1,7 @@
 const int GREEN_LED_PIN = 12;
 const int RED_LED_PIN = 13;
 const int CheckHumid = 400; //humid soil
-bool isHumid = false;
+bool isHumid = false; //flag
 int val;
 
 void setup() {
