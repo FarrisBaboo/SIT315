@@ -1,40 +1,41 @@
 const int GREEN_LED_PIN = 12;
-const int RED_LED_PIN = 13;
-const int CheckHumid = 400; //humid soil threshold
-bool isHumid = false; //flag
-int val;
+const int SENSOR_PIN = 2; //signal pin of sensor to digital pin 5
+bool isMotion = false; //flag
+int val; 
+uint8_t ledState = LOW;
 
 void setup() {
   Serial.begin(9600);
 
   pinMode(GREEN_LED_PIN, OUTPUT);
-  pinMode(RED_LED_PIN, OUTPUT);
+  pinMode(SENSOR_PIN, INPUT); // PIR motion sensor is an input here
 }
 
 void loop() {
-  //sense: soil moisture sensor records reading
-  val = analogRead(0); //connect sensor to Analog 0
+  //sense: motion sensor records reading
+  val = digitalRead(SENSOR_PIN);
   Serial.print(val); //print the value to serial port
-  Serial.println(" moisture level");
   
-  //think: compare sensor reading
-  if(val >= CheckHumid){
-    isHumid = true;
+  //think: check if there's motion
+  if (val == HIGH){
+    isMotion = true;
+    Serial.println(", motion detected");
   }
   else
   {
-    isHumid = false;
+    isMotion = false;
+    Serial.println(", no motion detected");
   }
     
-  //act: turn on LEDs accordingly
-  if(isHumid == true) {
-    digitalWrite(GREEN_LED_PIN, LOW);
-    digitalWrite(RED_LED_PIN, HIGH);
-    Serial.println("RED LED ON");
-  }
-  else {
-    digitalWrite(RED_LED_PIN, LOW);
-    digitalWrite(GREEN_LED_PIN, HIGH);
+  //act: turn on LED accordingly
+  if(isMotion) {
+    digitalWrite(GREEN_LED_PIN, !ledState);
     Serial.println("GREEN LED ON");
   }
+  else{
+    digitalWrite(GREEN_LED_PIN, ledState);
+    Serial.println("GREEN LED OFF");
+  }
+  
+  delay(1000);
 }
