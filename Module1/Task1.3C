@@ -1,13 +1,13 @@
 const int GREEN_LED_PIN = 12;
 const int BLUE_LED_PIN = 11;
-const int MOTION_PIN = 2; //signal pin of sensor to digital pin 2
-const int TILT_PIN = 3;
+const int MOTION_PIN = 2; //signal pin of the motion sensor connected to digital pin 2
+const int TILT_PIN = 3; //signal pin of the tilt sensor connected to digital pin 3
 
 uint8_t MotionState = LOW;
 uint8_t TiltState = LOW;
 
 void CheckMotion(){
-  MotionState = !MotionState;
+  MotionState = !MotionState; //change the state for GREEN LED
   digitalWrite(GREEN_LED_PIN, MotionState);
   if (MotionState) {
     Serial.println("Motion detected, GREEN LED ON");
@@ -15,7 +15,7 @@ void CheckMotion(){
 }
 
 void CheckTilt(){
-  TiltState = !TiltState;
+  TiltState = !TiltState; //change the state for BLUE LED
   digitalWrite(BLUE_LED_PIN, TiltState);
   if (TiltState) {
     Serial.println("Tilt detected, BLUE LED ON");
@@ -29,11 +29,12 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(MOTION_PIN), CheckMotion, CHANGE);
   
   //add interrupt to handle tilt sensor
-  attachInterrupt(digitalPinToInterrupt(TILT_PIN), CheckTilt, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(TILT_PIN), CheckTilt, HIGH);
   
+  //set pin modes for LEDs and sensors
   pinMode(GREEN_LED_PIN, OUTPUT);
   pinMode(BLUE_LED_PIN, OUTPUT);
-  pinMode(MOTION_PIN, INPUT); // PIR motion sensor is an input here
+  pinMode(MOTION_PIN, INPUT);
   pinMode(TILT_PIN, INPUT_PULLUP);
 }
 
