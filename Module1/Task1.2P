@@ -5,6 +5,9 @@ uint8_t ledState = LOW;
 void CheckMotion(){
   ledState = !ledState;
   digitalWrite(GREEN_LED_PIN, ledState);
+  if (ledState) {
+    Serial.println("Motion detected, GREEN LED ON");
+  }
 }
 
 void setup() {
