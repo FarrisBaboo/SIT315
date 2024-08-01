@@ -1,0 +1,80 @@
+const int GREEN_LED_PIN = 12;
+const int BLUE_LED_PIN = 11;
+const int YELLOW_LED_PIN = 10;
+
+const int MOTION_PIN = 2;
+const int TILT_PIN = 3;
+const int MOTION_PIN2 = 6;
+
+uint8_t MotionState = LOW;
+uint8_t TiltState = LOW;
+uint8_t YellowLedState = LOW;
+
+ISR(PCINT2_vect){
+  MotionState = !MotionState;
+  digitalWrite(GREEN_LED_PIN, MotionState);
+  if (MotionState) {
+    Serial.println("Motion detected, GREEN LED ON");
+  }
+}
+
+ISR(TIMER1_COMPA_vect){
+  //eeset TCNT1 to 0 ensures that the timer starts counting from the beginning during the next cycle
+  TCNT1 = 0;
+  YellowLedState = !YellowLedState;
+  digitalWrite(YELLOW_LED_PIN, YellowLedState);
+  if (YellowLedState){
+    Serial.println("YELLOW LED ON");
+  }
+  else{
+    Serial.println("YELLOW LED OFF");
+  }
+}
+
+void CheckTilt(){
+  TiltState = !TiltState;
+  digitalWrite(BLUE_LED_PIN, TiltState);
+  if (TiltState) {
+    Serial.println("Tilt detected, BLUE LED ON");
+  }
+}
+
+void setup() {
+  Serial.begin(9600);
+  
+  //add interrupt to handle tilt sensor
+  attachInterrupt(digitalPinToInterrupt(TILT_PIN), CheckTilt, HIGH);
+  
+  PCICR = 0B00000100; //pin change interrupt 2 is enabled
+  PCMSK2 = 0B01000100; //pin change interrupt on pin 6 and pin 2
+  
+  //reset control regoster to make sure everything is disabled
+  TCCR1A = 0; //reset entire TCCR1A to 0
+  TCCR1B = 0; //reset entire TCCR1B to 0
+  
+  pinMode(GREEN_LED_PIN, OUTPUT);
+  pinMode(BLUE_LED_PIN, OUTPUT);
+  pinMode(YELLOW_LED_PIN, OUTPUT);
+  
+  pinMode(MOTION_PIN, INPUT);
+  pinMode(TILT_PIN, INPUT_PULLUP);
+  pinMode(MOTION_PIN2, INPUT);
+  
+  startTimer();
+  
+  sei(); //enable interrupts globally
+}
+
+void startTimer(){
+  TCCR1B |= (1 << WGM12); //
+  TCCR1B |= (1 << CS10); //set prescaler to 1
+  TCCR1B |= (1 << CS12); //set prescaler to 1024
+  
+  //every 2 seconds
+  OCR1A = 31249; //holds the compare value which determines when the timer generates an interrupt
+
+  TIMSK1 = (1 << OCIE1A); //to trigger the ISR by enabling the Timer 1 compare match interrupt.
+}
+
+void loop() {
+}
